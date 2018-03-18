@@ -1,0 +1,21 @@
+{
+  "name": "browncoat",
+  "private": true,
+  "version": "1.0.0",
+  "description": "For testing various app states in container orchestration. It aims to misbehave",
+  "author": "Bret Fisher <bret@bretfisher.com>",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev-docker": "../node_modules/nodemon/bin/nodemon.js --debug=5858",
+    "dev-host": "nodemon --debug=5858"
+  },
+  "dependencies": {
+    "express": "^4.14.1",
+    "morgan": "^1.8.1",
+    "yn": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
