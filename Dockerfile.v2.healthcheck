@@ -3,7 +3,7 @@ FROM node:8
 ARG NODE_ENV=production
 ENV NODE_ENV $NODE_ENV
 
-ARG VERSION=v1
+ARG VERSION=v2
 ENV VERSION $VERSION
 
 ARG HCFAIL=false
@@ -30,6 +30,8 @@ WORKDIR /opt/app
 
 COPY . /opt/app
 
-# NO HEALTHCHECK
+# check every 5s to ensure this service returns HTTP 200
+HEALTHCHECK --interval=5s --timeout=3s --start-period=10s --retries=3 \ 
+  CMD curl -fs http://localhost:$PORT/healthz || exit 1
 
 CMD [ "node", "index.js" ]
