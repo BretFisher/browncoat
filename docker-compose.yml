@@ -6,7 +6,7 @@ services:
       context: .
       args:
         - NODE_ENV=development
-    command: ../node_modules/.bin/nodemon
+    command: ../node_modules/.bin/nodemon node app.js
     ports:
       - "80:80"
     volumes:
