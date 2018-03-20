@@ -15,7 +15,8 @@ app.locals.failstartup      = yn(process.env.FAIL_STARTUP, {default: false});
 app.locals.delaystartup     = parseInt(process.env.DELAY_STARTUP, 10) || 0;
 app.locals.delayhealthcheck = parseInt(process.env.DELAY_HEALTHCHECK, 10) || 0;
 app.locals.happyhealthcheck = yn(process.env.HAPPYHEALTHCHECK, {default: true});
-var server // because we need higher scope later
+app.locals.enablelogger     = yn(process.env.ENABLE_LOGGER, {default: true});
+var server; // because we need higher scope later
 
 // pull in routes
 var index = require('./routes/index');
@@ -23,7 +24,9 @@ var index = require('./routes/index');
 // standard express startup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.use(logger('dev'));
+if (app.locals.enablelogger) {
+  app.use(logger('dev'));
+}
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -54,7 +57,9 @@ app.get('/togglehealthcheck', function (req, res) {
 
 // to easily distinquish between versions while httping, we'll send a different status code for great demos
 app.get('/healthz', function (req, res) {
-  console.info(`Happy Healthcheck is ${app.locals.happyhealthcheck}`);
+  if (app.locals.enablelogger) {
+    console.info(`Happy Healthcheck is ${app.locals.happyhealthcheck}`);
+  }
   if (!app.locals.happyhealthcheck) {
     res.status(500);
   } else if (app.locals.version == 'v1') {
