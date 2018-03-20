@@ -12,6 +12,8 @@ ENV NODE_ENV=$NODE_ENV \
     HAPPYHEALTHCHECK=false \
     ENABLE_LOGGER=true
 
+RUN apk add --no-cache --virtual curl
+
 WORKDIR /opt
 
 COPY package.json package-lock.json* ./
