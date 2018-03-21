@@ -1,5 +1,6 @@
 FROM node:8-alpine
 
+# version for v3.healthcheck tag. Healthcheck included and version set to v3
 # fail healthcheck by default
 
 ARG NODE_ENV=production

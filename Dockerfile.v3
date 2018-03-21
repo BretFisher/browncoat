@@ -1,5 +1,6 @@
 FROM node:8-alpine
 
+# version for v3 tag. No healthcheck and version set to v3
 # fail startup by default
 
 ARG NODE_ENV=production

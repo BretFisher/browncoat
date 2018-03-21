@@ -1,5 +1,7 @@
 FROM node:8-alpine
 
+# default version for latest and v1 tags. No healthcheck and version set to v1
+
 ARG NODE_ENV=production
 ENV NODE_ENV=$NODE_ENV \
     PORT=80 \
