@@ -1,4 +1,4 @@
-# Browncoat 🚀🤠 - it aims to misbehave
+# Browncoat 🚀🤠 - it [aims to misbehave](https://www.youtube.com/watch?v=1VR3Av9qfZc)
 
 A container for testing various app states in orchestration. It aims to 
 misbehave in simple ways based on its config so you can ensure your 
