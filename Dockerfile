@@ -1,4 +1,4 @@
-FROM node:8-alpine
+FROM node:12-alpine
 
 # default version for latest and v1 tags. No healthcheck and version set to v1
 
@@ -12,7 +12,7 @@ ENV NODE_ENV=$NODE_ENV \
     HAPPYHEALTHCHECK=true \
     ENABLE_LOGGER=true
 
-RUN apk add --no-cache --virtual curl
+RUN apk add --no-cache curl
 
 WORKDIR /opt
 

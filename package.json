@@ -1,6 +1,6 @@
 {
   "name": "browncoat",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "For testing various app states in container orchestration. It aims to misbehave",
   "author": "Bret Fisher <bret@bretfisher.com>",
   "private": true,
@@ -10,19 +10,19 @@
     "dev-host": "nodemon --debug=5858"
   },
   "dependencies": {
-    "body-parser": "~1.18.2",
-    "cookie-parser": "~1.4.3",
+    "body-parser": "~1.19.0",
+    "cookie-parser": "^1.4.5",
     "debug": "~4.1.1",
-    "express": "^4.16.4",
-    "morgan": "~1.9.0",
-    "pug": "^2.0.3",
+    "express": "^4.17.1",
+    "morgan": "~1.10.0",
+    "pug": "^3.0.0",
     "serve-favicon": "~2.5.0",
     "stoppable": "^1.1.0",
-    "yn": "^3.0.0"
+    "yn": "^4.0.0"
   },
   "devDependencies": {
-    "eslint": "^5.15.1",
-    "eslint-config-google": "^0.12.0",
-    "nodemon": "^1.11.0"
+    "eslint": "^7.8.1",
+    "eslint-config-google": "^0.14.0",
+    "nodemon": "^2.0.4"
   }
 }

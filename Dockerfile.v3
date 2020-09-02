@@ -1,4 +1,4 @@
-FROM node:8-alpine
+FROM node:12-alpine
 
 # version for v3 tag. No healthcheck and version set to v3
 # fail startup by default
@@ -13,7 +13,7 @@ ENV NODE_ENV=$NODE_ENV \
     HAPPYHEALTHCHECK=true \
     ENABLE_LOGGER=true
 
-RUN apk add --no-cache --virtual curl
+RUN apk add --no-cache curl
 
 WORKDIR /opt
 

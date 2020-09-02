@@ -1,4 +1,4 @@
-FROM node:8-alpine
+FROM node:12-alpine
 
 # version for v2.healthcheck tag. Healthcheck included and version set to v2
 
@@ -12,7 +12,7 @@ ENV NODE_ENV=$NODE_ENV \
     HAPPYHEALTHCHECK=true\
     ENABLE_LOGGER=true
 
-RUN apk add --no-cache --virtual curl
+RUN apk add --no-cache curl
 
 WORKDIR /opt
 
@@ -28,7 +28,7 @@ COPY . /opt/app
 
 # check every 5s to ensure this service returns HTTP 200
 HEALTHCHECK --interval=5s --timeout=3s --start-period=10s --retries=3 \ 
-  CMD curl -fs http://localhost:$PORT/healthz || exit 1
+    CMD curl -fs http://localhost:$PORT/healthz || exit 1
 
 CMD [ "node", "app.js" ]
 
