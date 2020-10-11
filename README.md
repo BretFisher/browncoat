@@ -68,8 +68,13 @@ Note: Lots more options you could do here to test various Swarm reactions to iss
 
 ## Examples with Kubernetes
 
-Would happyly accept a PR!
+Now with Kubernetes flavor
 
+1. `kubectl apply -f kubernetes-examples/browncoat-base.yaml` - Create a Deployment with 5 pods without livenessProbe neither readinessProbe and a Service to expose the pods
+2. `kubectl run -i --tty httping --image=bretfisher/httping -- -i .1 -GsY firefly/healthz` stars a Pod with the image `bretfisher/httping` and send the logs to the terminal. If you exit the session you can attach to the pod by executing the command `kubectl attach httping -c httping -i -t`
+3. `kubectl apply -f browncoat-v2.yaml` to change the container image to `bretfisher/browncoat:v2` and add the `DELAY_STARTUP` of 5s to simulate a small delay and cause some connection failures. To follow the rollout use the command `kubectl rollout status deploy/firefly`
+4. Now we will add a readinessProbe to check if the endpoint `healthz` returns a successful response and will change to the image v1 to see a different response code (`201`). 
+`kubectl apply -f  browncoat-v1-withProbe.yaml` to apply the changes and `kubectl rollout status deploy/firefly` to follow the rollout. Note: The readinessProbe is uses to indicate the Service Resource if the pod is ready to accept traffic. 
 ## All startup config options are via environment variables
 
 - `PORT` - int, port to listen on, defaults to 80
