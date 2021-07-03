@@ -1,4 +1,4 @@
-FROM node:12-alpine
+FROM node:12-alpine as v1
 
 # default version for latest and v1 tags. No healthcheck and version set to v1
 
@@ -30,4 +30,26 @@ COPY . /opt/app
 
 CMD [ "node", "app.js" ]
 
-# vi:syntax=Dockerfile
+
+FROM v1 as v1-healthcheck
+# check every 5s to ensure this service returns HTTP 200
+HEALTHCHECK --interval=5s --timeout=3s --start-period=10s --retries=3 \ 
+    CMD curl -fs http://localhost:$PORT/healthz || exit 1
+
+
+FROM v1 as v2
+ENV VERSION=v2
+
+
+FROM v1-healthcheck as v2-healthcheck
+ENV VERSION=v2
+
+
+FROM v1 as v3
+ENV VERSION=v3 \
+    FAIL_STARTUP=true
+
+
+FROM v1-healthcheck as v3-healthcheck
+ENV VERSION=v3 \
+    HAPPYHEALTHCHECK=false
