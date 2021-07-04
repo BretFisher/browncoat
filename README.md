@@ -37,6 +37,7 @@ Here's a list of images stored on Docker Hub and how they are different.
 |bretfisher/browncoat:v2|v2|False|202|  |
 |bretfisher/browncoat:v3|v3|False|203|Fails on start|
 |bretfisher/browncoat:healthcheck|v1|True|201|   |
+|bretfisher/browncoat:v1.healthcheck|v1|True|201|Identical to healthcheck|
 |bretfisher/browncoat:v2.healthcheck|v2|True|202|   |
 |bretfisher/browncoat:v3.healthcheck|v3|True|203|Healthcheck returns 500|
 
@@ -55,7 +56,7 @@ Here's a list of images stored on Docker Hub and how they are different.
 - `/` - Returns a random image of Serenity crew.
 
 - `/healthz` - Returns JSON of environment variables. Returns 500 if `HAPPYHEALTHCHECK` is false.
-Returns a 20x if true. Actual status code matches the version of app running. This is useful for using 
+Returns a 20x if true. Actual status code matches the version of app running. This is useful for using
 tools like httping to test connectivity while doing rolling or blue/green updates and being able to see
 which is responding.
   - 201 - v1

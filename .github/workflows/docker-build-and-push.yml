@@ -66,33 +66,188 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+### inital v1 image. Set target and tags, and push again
       -
         name: Docker meta
-        id: docker_meta
+        id: docker_meta_v1
         uses: docker/metadata-action@v3.3.0
         with:
           # list of Docker images to use as base name for tags
           images: |
+            bretfisher/browncoat
             ghcr.io/bretfisher/browncoat
           flavor: |
             latest=false
           tags: |
             type=raw,value=latest
+            type=raw,value=v1
       -
         # this will build the images, once per platform, 
         # then push to both Docker Hub and GHCR
         name: Build and push
-        id: docker_build
+        id: docker_build_v1
         uses: docker/build-push-action@v2
         with:
+          target: v1
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           # don't push during a pull_request, only build
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.docker_meta.outputs.tags }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
+          tags: ${{ steps.docker_meta_v1.outputs.tags }}
+          labels: ${{ steps.docker_meta_v1.outputs.labels }}
+### v2 change target and tags, and push again
+      -
+        name: Docker meta
+        id: docker_meta_v2
+        uses: docker/metadata-action@v3.3.0
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            bretfisher/browncoat
+            ghcr.io/bretfisher/browncoat
+          flavor: |
+            latest=false
+          tags: |
+            type=raw,value=v2
+      -
+        # this will build the images, once per platform, 
+        # then push to both Docker Hub and GHCR
+        name: Build and push
+        id: docker_build_v2
+        uses: docker/build-push-action@v2
+        with:
+          target: v2
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=local,src=/tmp/.buildx-cache-new
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+          # don't push during a pull_request, only build
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.docker_meta_v2.outputs.tags }}
+          labels: ${{ steps.docker_meta_v2.outputs.labels }}
+### v3 change target and tags, and push again
+      -
+        name: Docker meta
+        id: docker_meta_v3
+        uses: docker/metadata-action@v3.3.0
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            bretfisher/browncoat
+            ghcr.io/bretfisher/browncoat
+          flavor: |
+            latest=false
+          tags: |
+            type=raw,value=v3
+      -
+        # this will build the images, once per platform, 
+        # then push to both Docker Hub and GHCR
+        name: Build and push
+        id: docker_build_v3
+        uses: docker/build-push-action@v2
+        with:
+          target: v3
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=local,src=/tmp/.buildx-cache-new
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+          # don't push during a pull_request, only build
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.docker_meta_v3.outputs.tags }}
+          labels: ${{ steps.docker_meta_v3.outputs.labels }}
+### v1-healthcheck change target and tags, and push again
+      -
+        name: Docker meta
+        id: docker_meta_v1-healthcheck
+        uses: docker/metadata-action@v3.3.0
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            bretfisher/browncoat
+            ghcr.io/bretfisher/browncoat
+          flavor: |
+            latest=false
+          tags: |
+            type=raw,value=healthcheck
+            type=raw,value=v1.healthcheck
+      -
+        # this will build the images, once per platform, 
+        # then push to both Docker Hub and GHCR
+        name: Build and push
+        id: docker_build_v1-healthcheck
+        uses: docker/build-push-action@v2
+        with:
+          target: v1-healthcheck
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=local,src=/tmp/.buildx-cache-new
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+          # don't push during a pull_request, only build
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.docker_meta_v1-healthcheck.outputs.tags }}
+          labels: ${{ steps.docker_meta_v1-healthcheck.outputs.labels }}
+### v2-healthcheck change target and tags, and push again
+      -
+        name: Docker meta
+        id: docker_meta_v2-healthcheck
+        uses: docker/metadata-action@v3.3.0
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            bretfisher/browncoat
+            ghcr.io/bretfisher/browncoat
+          flavor: |
+            latest=false
+          tags: |
+            type=raw,value=v2.healthcheck
+      -
+        # this will build the images, once per platform, 
+        # then push to both Docker Hub and GHCR
+        name: Build and push
+        id: docker_build_v2-healthcheck
+        uses: docker/build-push-action@v2
+        with:
+          target: v2-healthcheck
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=local,src=/tmp/.buildx-cache-new
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+          # don't push during a pull_request, only build
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.docker_meta_v2-healthcheck.outputs.tags }}
+          labels: ${{ steps.docker_meta_v2-healthcheck.outputs.labels }}
+### v3-healthcheck change target and tags, and push again
+      -
+        name: Docker meta
+        id: docker_meta_v3-healthcheck
+        uses: docker/metadata-action@v3.3.0
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            bretfisher/browncoat
+            ghcr.io/bretfisher/browncoat
+          flavor: |
+            latest=false
+          tags: |
+            type=raw,value=v3.healthcheck
+      -
+        # this will build the images, once per platform, 
+        # then push to both Docker Hub and GHCR
+        name: Build and push
+        id: docker_build_v3-healthcheck
+        uses: docker/build-push-action@v2
+        with:
+          target: v3-healthcheck
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=local,src=/tmp/.buildx-cache-new
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+          # don't push during a pull_request, only build
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.docker_meta_v3-healthcheck.outputs.tags }}
+          labels: ${{ steps.docker_meta_v3-healthcheck.outputs.labels }
       -
         # Temp fix
         # https://github.com/docker/build-push-action/issues/252
@@ -103,4 +258,10 @@ jobs:
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
       -
         name: Show image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+        run: |
+          echo ${{ steps.docker_build_v1.outputs.digest }}
+          echo ${{ steps.docker_build_v2.outputs.digest }}
+          echo ${{ steps.docker_build_v3.outputs.digest }}
+          echo ${{ steps.docker_build_healthcheck.outputs.digest }}
+          echo ${{ steps.docker_build_v2-healthcheck.outputs.digest }}
+          echo ${{ steps.docker_build_v3-healthcheck.outputs.digest }}
