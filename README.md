@@ -1,8 +1,8 @@
 # Browncoat 🚀🤠 - it [aims to misbehave](https://www.youtube.com/watch?v=1VR3Av9qfZc)
 
-A container for testing various app states in orchestration. It aims to 
-misbehave in simple ways based on its config so you can ensure your 
-orchestration reponds how you want/expect. You can set this Node.js web app to:
+A container image for testing various app states in orchestration. It aims to
+misbehave in simple ways based on its config so you can ensure your
+orchestration responds how you want/expect. You can set this Node.js web app to:
 
 1. Have a slow startup
 1. Fail startup
@@ -12,17 +12,23 @@ orchestration reponds how you want/expect. You can set this Node.js web app to:
 1. Slow healthchecks
 1. Responds with a different 20x HTTP status code for different image tags (versions)
 
-You can configure all these things at setup/runtime via envvars, and some of them while the 
-container is running, via specific routes (URLs).
+You can configure all these things at setup/runtime via environment variables,
+and some of them while the container is running, via specific routes (URLs).
 
 ## Image tags
 
-The app code is the same in all images, but they do have different default envvars set and ones
-marked healthcheck will have a HEALTHCHECK set in Dockerfile. You can override the envvars listed 
-later at runtime to make any image act differently, but these images are provided for doing basic
-container update testing, and then you can build on them with runtime envvar settings. Healthcheck 
-HTTP Codes are different per version to make container update identification easier when using httping
-or similar tool.
+The images are available on [Docker Hub](https://hub.docker.com/r/bretfisher/browncoat)
+and [GitHub Container Registry](https://github.com/BretFisher/browncoat/packages).
+The app code is the same in all images, but different image tags have different
+Dockerfile and env vars set.
+
+Image tags marked healthcheck will have a HEALTHCHECK set in Dockerfile.
+
+HTTP Codes are different per image tag version to make container update
+identification easier when using
+[httping](https://github.com/BretFisher/httping-docker) or similar tool.
+
+Here's a list of images stored on Docker Hub and how they are different.
 
 |Image|Version|Healcheck|/healthz HTTP Code|Note|
 |---|---|---|---|---|
@@ -34,58 +40,10 @@ or similar tool.
 |bretfisher/browncoat:v2.healthcheck|v2|True|202|   |
 |bretfisher/browncoat:v3.healthcheck|v3|True|203|Healthcheck returns 500|
 
-## Examples with Docker Run
-
-- `docker run -p 80:80 --env DELAY_STARTUP=5000 bretfisher/browncoat:v1` - Start the v1 image
-with a slow startup of 5 seconds (Node will wait 5s before listening on the port). This is useful
-to simulate apps that take more time to startup, and also simulate distrubted environments 
-where not all things start in "proper" order.
-- `docker run -p 80:80 --env FAIL_STARTUP=true bretfisher/browncoat:v2` - Start the v2 image and cause
-it to exit with an error code. Simulate what would happen if you didn't test proper running of a 
-container in CI and something was set wrong when you deployed container. Do you systems catch this type
-of quick failure that may not show up in unit tests. Note `bretfisher/browncoat:v3` does this by default.
-
-Note: `docker run` doesn't react to failed healthchecks.
-
-
-## Examples with Swarm Services
-
-This is where things get fun.
-
-1. `docker service create --name firefly -p 80:80 --replicas 3 bretfisher/browncoat` - Create a three-container
-service that doesn't have a Dockerfile healthcheck built in.
-1. Install httping to monitor the health endpoint `/healthz` with something like 
-`httping -i .1 -GsY localhost/healthz`. You can also run it from a container: 
-`docker run --rm bretfisher/httping -i .1 -GsY <hostIP>/healthz`. Notice you get a 201 response code. v2 
-will have a 202 response code to make it easier to identiy how updates are distributing connections.
-1. `docker service update --image bretfisher/browncoat:v2 firefly`. Notice some connections will fail. This is 
-normal without a healthcheck. Docker has no awareness of if you're container is trully "ready" for connections and 
-starts sending them to new containers before app is listening. This gets worse as your `DELAY_STARTUP` increases.
-1. `docker service update --image bretfisher/browncoat:healthcheck firefly`. This time you should have zero
-connection failures. The new image has HEALTHCHECK command in it, so Swarm uses it to wait for ready state.
-
-Note: Lots more options you could do here to test various Swarm reactions to issues... read on!
-
-## Examples with Kubernetes
-
-Now with Kubernetes flavor. 
-In Kubernetes we have 2 checks: livenessProbe and readinessProbe.
-A little mnemonic is livenessProbe to check if container is live, and readinessProbe to check if container is ready to serve traffic
-But For more info you can check this [docs](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes)
-
-1. `kubectl apply -f kubernetes-examples/browncoat-base.yaml` - Create a Deployment with 5 pods without livenessProbe neither readinessProbe and a Service to expose the pods
-2. `kubectl run -i --tty httping --image=bretfisher/httping -- -i .1 -GsY firefly/healthz` stars a Pod with the image `bretfisher/httping` and send the logs to the terminal. If you exit the session you can attach to the pod by executing the command `kubectl attach httping -c httping -i -t`
-### Play with readinessProbe
-3. `kubectl apply -f browncoat-v2.yaml` to change the container image to `bretfisher/browncoat:v2` and add the `DELAY_STARTUP` of 5s to simulate a small delay and cause some connection failures. To follow the rollout use the command `kubectl rollout status deploy/firefly`
-4. Now we will add a readinessProbe to check if the endpoint `healthz` returns a successful response and will change to the image v1 to see a different response code (`201`). 
-`kubectl apply -f  browncoat-v1-withProbe.yaml` to apply the changes and `kubectl rollout status deploy/firefly` to follow the rollout. Note: The readinessProbe is uses to indicate the Service Resource if the pod is ready to accept traffic. 
-
-*Note:* We don't have an example for livenessProbe because that probe is used by Kubernetes to monitor the health of the service.
-
-## All startup config options are via environment variables
+## Startup config options via environment variables
 
 - `PORT` - int, port to listen on, defaults to 80
-- `VERSION` - string, doesn't change the functionanlity, but used to create different images for update testing
+- `VERSION` - string, doesn't change the functionality, but used to create different images for update testing
 - `FAIL_STARTUP` - true/false, exit(1) right at start
 - `DELAY_STARTUP` - int, set to milliseconds the app will wait before listening on PORT
 - `DELAY_HEALTHCHECK` - int, set to milliseconds the app will wait before responding on /healthz
@@ -106,9 +64,129 @@ which is responding.
 
 - `/fail` - Returns 500 and exits the Node process with an error code.
 
-- `/togglehealthcheck` = By default the healthcheck URL returns 20x. 
-Hitting this URL will cause them to start returning 500. 
+- `/togglehealthcheck` = By default the healthcheck URL returns 20x.
+Hitting this URL will cause them to start returning 500.
 Hitting it again will return to 20x.
 
-## This is a Node.js app using [Express](https://expressjs.com/) for easier http servering 
+## Examples with Docker Run
+
+### Show slow startup
+
+Start the v1 image with a slow startup of 5 seconds (Node will wait 5s before listening
+on the port). This is useful to simulate apps that take more time to startup, and also
+simulate distributed environments where not all things start in "proper" order.
+
+```shell
+docker run -p 80:80 --env DELAY_STARTUP=5000 bretfisher/browncoat:v1
+```
+
+You could use [httping](https://github.com/BretFisher/httping-docker) or `curl` to show
+how the first 5 seconds of that container running, it doesn't repond to HTTP requests.
+
+### Fail on app startup
+
+Next, start the v2 image and cause it to exit with an error code. This will simulate
+what would happen if you didn't test proper running of a container in CI and something
+was set wrong when you deployed container. Do you systems catch this type
+of quick failure that may not show up in unit tests? Note: `bretfisher/browncoat:v3`
+does this startup failure by default.
+
+```shell
+docker run -p 80:80 --env FAIL_STARTUP=true bretfisher/browncoat:v2
+```
+
+Note: `docker run` and `docker compose` don't react to failed healthchecks like
+orchestrators, but they do provide healthcheck status.
+
+## Examples with Swarm
+
+### Create the initial Service
+
+Create a three-container service that doesn't have a Dockerfile healthcheck built in.
+
+```shell
+docker service create --name browncoat -p 80:80 --replicas 3 bretfisher/browncoat
+```
+
+Next, install httping on your host to monitor the health endpoint `/healthz` with something like
+`httping -i .1 -GsY localhost/healthz`. You can also run it from a container:
+`docker run --rm bretfisher/httping -i .1 -GsY <hostIP>/healthz`. Notice you get a 201 response code. v2
+will have a 202 response code to make it easier to identity how updates are distributing connections.
+
+Now we can update the service with a new image.
+
+```shell
+docker service update --image bretfisher/browncoat:v2 browncoat
+```
+
+Notice some connections will fail. This is normal without a healthcheck.
+Docker has no awareness of if you're container is truly "ready" for connections and
+starts sending them to new containers before app is listening. This gets worse as your `DELAY_STARTUP` increases.
+
+Now let's update to another new image. This time you should have zero
+connection failures. The new image has HEALTHCHECK command in it, so Swarm uses it to wait for ready state.
+
+```shell
+docker service update --image bretfisher/browncoat:healthcheck browncoat
+```
+
+Note: this YAML should also work with `docker compose` but it won't replace services, it'll only indicate
+the health status with `docker compose ps`. This is useful for using the `depends_on:` + `condition: service_healthy`
+to have one service startup wait for another service to be healthy.
+
+## Examples with Kubernetes
+
+Kubernetes ignores Dockerfile `HEALTHCHECK` commands, so you'll need to add them
+to your Pod spec. In Kubernetes we have two main checks: livenessProbe and readinessProbe.
+A little mnemonic is livenessProbe to check if container is live,
+and readinessProbe to check if container is ready to serve traffic
+But For more info you can check the
+[docs](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes)
+
+### Create the initial Kubernetes Deployment
+
+The below creates a Deployment with 5 pods without
+livenessProbe or readinessProbe and a Service to expose the pods.
+
+```shell
+kubectl apply -f kubernetes-examples/browncoat-v1.yaml
+```
+
+### Causing a rolling update outages due to a lack of probes
+
+Now let's update that Deployment with the default rolling update style.
+We will change the container image to `bretfisher/browncoat:v2` and add the
+`DELAY_STARTUP` of 5s to simulate a small delay and cause some connection failures
+during the rolling update. Probes would have helped prevent connections
+from being directed to the new Pod until it was ready. Without probes,
+Kubernetes is blind and will start directing Service traffic to the new Pod as
+soon as it started.
+
+To follow the rollout use is command in a different window
+`kubectl rollout status deploy/browncoat`
+
+To monitor the Service connections, run
+[httping](https://github.com/BretFisher/httping-docker) in a different window
+
+```shell
+kubectl run httping -it --image bretfisher/httping --rm=true -- browncoat/healthz 
+```
+
+Now apply the new image and env var
+
+```shell
+kubectl apply -f kubernetes-examples/browncoat-v2.yaml
+```
+
+### Add readinessProbe and monitor a new
+
+Now we will add a readinessProbe to check if the endpoint `healthz` returns a
+successful response and will change to the image v1 to see a different response code (`201`).
+
+```shell
+kubectl apply -f  kubernetes-examples/browncoat-v1-withProbe.yaml
+```
+
+## This is a Node.js app using [Express](https://expressjs.com/) for easier http servering
+
 and [Stoppable](https://github.com/hunterloftis/stoppable) for better graceful shutdowns.
