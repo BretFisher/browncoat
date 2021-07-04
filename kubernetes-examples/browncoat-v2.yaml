@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: firefly
+  name: browncoat
 spec:
   replicas: 5
   selector:
     matchLabels:
-      app: firefly
+      app: browncoat
   template:
     metadata:
       labels:
-        app: firefly
+        app: browncoat
     spec:
       containers:
-      - name: firefly
+      - name: browncoat
         image: bretfisher/browncoat:v2
         env:
           - name: DELAY_STARTUP
@@ -29,10 +29,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: firefly
+  name: browncoat
 spec:
   selector:
-    app: firefly
+    app: browncoat
   ports:
   - port: 80
     targetPort: main
