@@ -55,4 +55,6 @@ jobs:
           # https://github.com/replicatedhq/dockerfilelint/issues/169
           # hadolint will run and is sufficent (no need for two linters)
           VALIDATE_DOCKERFILE: false
+          # for example repos, let's engnore repeated lines
+          VALIDATE_JSCPD: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
