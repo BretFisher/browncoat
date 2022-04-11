@@ -70,7 +70,7 @@ jobs:
       -
         name: Docker meta
         id: docker_meta_v1
-        uses: docker/metadata-action@v3.6.2
+        uses: docker/metadata-action@v3.7.0
         with:
           # list of Docker images to use as base name for tags
           images: |
@@ -101,7 +101,7 @@ jobs:
       -
         name: Docker meta
         id: docker_meta_v2
-        uses: docker/metadata-action@v3.6.2
+        uses: docker/metadata-action@v3.7.0
         with:
           # list of Docker images to use as base name for tags
           images: |
@@ -131,7 +131,7 @@ jobs:
       -
         name: Docker meta
         id: docker_meta_v3
-        uses: docker/metadata-action@v3.6.2
+        uses: docker/metadata-action@v3.7.0
         with:
           # list of Docker images to use as base name for tags
           images: |
@@ -161,7 +161,7 @@ jobs:
       -
         name: Docker meta
         id: docker_meta_v1-healthcheck
-        uses: docker/metadata-action@v3.6.2
+        uses: docker/metadata-action@v3.7.0
         with:
           # list of Docker images to use as base name for tags
           images: |
@@ -192,7 +192,7 @@ jobs:
       -
         name: Docker meta
         id: docker_meta_v2-healthcheck
-        uses: docker/metadata-action@v3.6.2
+        uses: docker/metadata-action@v3.7.0
         with:
           # list of Docker images to use as base name for tags
           images: |
@@ -222,7 +222,7 @@ jobs:
       -
         name: Docker meta
         id: docker_meta_v3-healthcheck
-        uses: docker/metadata-action@v3.6.2
+        uses: docker/metadata-action@v3.7.0
         with:
           # list of Docker images to use as base name for tags
           images: |
