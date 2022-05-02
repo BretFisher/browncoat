@@ -1,0 +1,166 @@
+---
+# template source: https://github.com/bretfisher/docker-build-workflow/blob/main/templates/call-docker-build.yaml
+name: Build Images
+
+on:
+  # we want pull requests so we can build(test) but not push to image registry
+  pull_request:
+    branches:
+      - 'main'
+    # only build when important files change
+    paths-ignore:
+      - 'README.md'
+      - '.github/workflows/call-super-linter.yaml'
+      - '.github/linters/**'
+  push:
+    branches:
+      - 'main'
+    # only build when important files change
+    paths-ignore:
+      - 'README.md'
+      - '.github/workflows/call-super-linter.yaml'
+      - '.github/linters/**'
+  schedule:
+    # re-run monthly to keep image fresh with upstream base images
+    - cron: '0 12 15 * *'
+
+jobs:
+
+### initial v1 image. Set target and tags, and push again
+  build-v1:
+    name: Build v1
+    uses: bretfisher/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
+    permissions:
+      contents: read
+      packages: write # needed to push docker image to ghcr.io
+      pull-requests: write # needed to create and update comments in PRs
+    secrets:
+      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+    with:
+      dockerhub-enable: true
+      ghcr-enable: true
+      image-names: |
+        bretfisher/browncoat
+        ghcr.io/bretfisher/browncoat
+      tag-rules: |
+        type=raw,value=latest
+        type=raw,value=v1
+      target: v1
+      platforms: linux/amd64,linux/arm64,linux/arm/v7
+
+   
+### v2 change target and tags, and push again
+  build-v2:
+    name: Build v2
+    uses: bretfisher/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
+    permissions:
+      contents: read
+      packages: write # needed to push docker image to ghcr.io
+      pull-requests: write # needed to create and update comments in PRs
+    secrets:
+      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+    with:
+      dockerhub-enable: true
+      ghcr-enable: true
+      image-names: |
+        bretfisher/browncoat
+        ghcr.io/bretfisher/browncoat
+      tag-rules: |
+        type=raw,value=v2
+      target: v2
+      platforms: linux/amd64,linux/arm64,linux/arm/v7
+
+
+### v3 change target and tags, and push again
+  build-v3:
+    name: Build v3
+    uses: bretfisher/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
+    permissions:
+      contents: read
+      packages: write # needed to push docker image to ghcr.io
+      pull-requests: write # needed to create and update comments in PRs
+    secrets:
+      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+    with:
+      dockerhub-enable: true
+      ghcr-enable: true
+      image-names: |
+        bretfisher/browncoat
+        ghcr.io/bretfisher/browncoat
+      tag-rules: |
+        type=raw,value=v3
+      target: v3
+      platforms: linux/amd64,linux/arm64,linux/arm/v7
+
+
+### v1-healthcheck change target and tags, and push again
+  build-v1-healthcheck:
+    name: Build v1-healthcheck
+    uses: bretfisher/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
+    permissions:
+      contents: read
+      packages: write # needed to push docker image to ghcr.io
+      pull-requests: write # needed to create and update comments in PRs
+    secrets:
+      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+    with:
+      dockerhub-enable: true
+      ghcr-enable: true
+      image-names: |
+        bretfisher/browncoat
+        ghcr.io/bretfisher/browncoat
+      tag-rules: |
+        type=raw,value=healthcheck
+            type=raw,value=v1.healthcheck
+      target: v1-healthcheck
+      platforms: linux/amd64,linux/arm64,linux/arm/v7
+
+
+### v2-healthcheck change target and tags, and push again
+  build-v2-healthcheck:
+    name: Build v2-healthcheck
+    uses: bretfisher/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
+    permissions:
+      contents: read
+      packages: write # needed to push docker image to ghcr.io
+      pull-requests: write # needed to create and update comments in PRs
+    secrets:
+      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+    with:
+      dockerhub-enable: true
+      ghcr-enable: true
+      image-names: |
+        bretfisher/browncoat
+        ghcr.io/bretfisher/browncoat
+      tag-rules: |
+        type=raw,value=v2.healthcheck
+      target: v2-healthcheck
+      platforms: linux/amd64,linux/arm64,linux/arm/v7
+
+
+### v3-healthcheck change target and tags, and push again
+  build-v3-healthcheck:
+    name: Build v3-healthcheck
+    uses: bretfisher/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
+    permissions:
+      contents: read
+      packages: write # needed to push docker image to ghcr.io
+      pull-requests: write # needed to create and update comments in PRs
+    secrets:
+      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+    with:
+      dockerhub-enable: true
+      ghcr-enable: true
+      image-names: |
+        bretfisher/browncoat
+        ghcr.io/bretfisher/browncoat
+      tag-rules: |
+        type=raw,value=v3.healthcheck
+      target: v3-healthcheck
+      platforms: linux/amd64,linux/arm64,linux/arm/v7

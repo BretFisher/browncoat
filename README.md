@@ -1,5 +1,8 @@
 # Browncoat 🚀🤠 - it [aims to misbehave](https://www.youtube.com/watch?v=1VR3Av9qfZc)
 
+[![Lint Code Base](https://github.com/BretFisher/browncoat/actions/workflows/call-super-linter.yaml/badge.svg)](https://github.com/BretFisher/browncoat/actions/workflows/call-super-linter.yaml)
+[![Build Images](https://github.com/BretFisher/browncoat/actions/workflows/call-docker-build.yaml/badge.svg)](https://github.com/BretFisher/browncoat/actions/workflows/call-docker-build.yaml)
+
 A container image for testing various app states in orchestration. It aims to
 misbehave in simple ways based on its config so you can ensure your
 orchestration responds how you want/expect. You can set this Node.js web app to:
@@ -63,7 +66,7 @@ which is responding.
   - 202 - v2
   - 203 - v3
 
-- `/fail` - Returns 500 and exits the Node process with an error code.
+- `/fail` - Returns 500 and exits the Node.js process with an error code.
 
 - `/togglehealthcheck` = By default the healthcheck URL returns 20x.
 Hitting this URL will cause them to start returning 500.
@@ -73,7 +76,7 @@ Hitting it again will return to 20x.
 
 ### Show slow startup
 
-Start the v1 image with a slow startup of 5 seconds (Node will wait 5s before listening
+Start the v1 image with a slow startup of 5 seconds (Node.js will wait 5s before listening
 on the port). This is useful to simulate apps that take more time to startup, and also
 simulate distributed environments where not all things start in "proper" order.
 
@@ -103,7 +106,7 @@ orchestrators, but they do provide healthcheck status.
 
 ### Create the initial Service
 
-Create a three-container service that doesn't have a Dockerfile healthcheck built in.
+Create a three-container service that doesn't have a Dockerfile healthcheck built-in.
 
 ```shell
 docker service create --name browncoat -p 80:80 --replicas 3 bretfisher/browncoat
