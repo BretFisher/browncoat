@@ -10,10 +10,10 @@
     "dev-host": "nodemon --debug=5858"
   },
   "dependencies": {
-    "body-parser": "~1.19.2",
+    "body-parser": "~1.20.3",
     "cookie-parser": "^1.4.5",
     "debug": "~4.3.1",
-    "express": "^4.19.2",
+    "express": "^4.21.0",
     "morgan": "~1.10.0",
     "pug": "^3.0.3",
     "serve-favicon": "~2.5.0",
