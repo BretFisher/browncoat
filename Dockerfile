@@ -1,4 +1,5 @@
-FROM node:12-alpine as v1
+# syntax=docker/dockerfile:1
+FROM node:22-alpine as v1
 
 # default version for latest and v1 tags. No healthcheck and version set to v1
 
